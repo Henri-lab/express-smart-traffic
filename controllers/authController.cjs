@@ -6,14 +6,15 @@ require('dotenv').config();
 const register = async (req, res) => {
   const { id, username, password, type, isOnline } = req.body;
   // 在axios的拦截器中定义的req.body
-  const hashedPassword = bcrypt.hashSync(password, 8);
+  // const hashedPassword = bcrypt.hashSync(password, 8);
 
   try {
     const user = await User.findByUsername(username)
     if (user) return res.status(409).json({ err: 'username has existed!' });
-    const result = await User.create(id, username, hashedPassword, type, isOnline);
+    // const result = await User.create(id, username, hashedPassword, type, isOnline);
+    const result = await User.create(id, username, password, type, isOnline);
     // 用户创建成功，返回状态码，提示，数据库用户ID，唯一用户名
-    res.status(201).json({ message: 'User registered successfully', mysqlId: result.mysql_id, mysqlUsername: result.mysql_username });
+    res.status(201).json({ message: 'User registered successfully', key: result.key, mysqlUsername: result.mysql_username });
   } catch (err) {
     console.error('Unexpected error during registered:', err);
     res.status(500).send('Error on the server');

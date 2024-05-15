@@ -21,7 +21,7 @@ class User {
                     // 如果用户名存在，生成一个唯一的用户名
                     return User.create(id, uniqueUsername, password, type, isOnline)
                         // 递归调用 create 方法，使用新的唯一用户名
-                        .then((result) => resolve({ mysql_id: result.insertId, mysql_username: uniqueUsername }))
+                        .then((result) => resolve({ key: result.insertID, mysql_username: uniqueUsername }))
                         // 返回生成的名称交给用户使用
                         .catch(reject);
                 }
@@ -33,8 +33,8 @@ class User {
                         console.error('Error inserting user:', err);
                         return reject(err);
                     }
-                    console.log('User inserted with ID:', result.insertId);
-                    resolve({ mysql_id: result.insertId, mysql_username: username });
+                    console.log('User inserted with autoID:', result.insertId);
+                    resolve({ key: result.insertId, mysql_username: username });
                 });
             });
         });
