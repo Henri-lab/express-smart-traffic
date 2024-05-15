@@ -78,7 +78,7 @@ const changePassword = async (req, res) => {
     }
 
     // 验证当前密码是否正确
-    const isPasswordValid = await User.comparePassword(currentPassword);
+    const isPasswordValid = bcrypt.compareSync(currentPassword, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ err: 'Current password is incorrect' });
     }

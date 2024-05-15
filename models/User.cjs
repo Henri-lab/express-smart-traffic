@@ -4,7 +4,7 @@ const crypto = require('crypto');
 class User {
     static create(id, username, password, type, isOnline) {
         return new Promise((resolve, reject) => {
-            const checkSql = 'SELECT * FROM users WHERE username = ? LIMIT 1';
+            const checkSql = 'SELECT * FROM user WHERE username = ? LIMIT 1';
             db.query(checkSql, [username], (err, results) => {
                 if (err) {
                     console.error('Error checking username:', err);
@@ -27,7 +27,7 @@ class User {
                 }
 
                 // 如果用户名不存在，插入用户
-                const insertSql = 'INSERT INTO users (id, username, password, type, isOnline) VALUES (?, ?, ?, ?, ?)';
+                const insertSql = 'INSERT INTO user (id, username, password, type, isOnline) VALUES (?, ?, ?, ?, ?)';
                 db.query(insertSql, [id, username, password, type, isOnline], (err, result) => {
                     if (err) {
                         console.error('Error inserting user:', err);
@@ -43,7 +43,7 @@ class User {
 
     static findByUsername(username) {
         return new Promise((resolve, reject) => {
-            const sql = 'SELECT * FROM users WHERE username = ? LIMIT 1';
+            const sql = 'SELECT * FROM user WHERE username = ? LIMIT 1';
             // 在 MySQL 中，查询结果通常会返回一个数组
             // 只返回一个用户 ;前提：用户名唯一
             db.query(sql, [username], (err, results) => {
@@ -58,7 +58,7 @@ class User {
 
     static findById(id) {
         return new Promise((resolve, reject) => {
-            const sql = 'SELECT * FROM users WHERE id = ?';
+            const sql = 'SELECT * FROM user WHERE id = ?';
             db.query(sql, [id], (err, results) => {
                 if (err) {
                     console.log('Error finding user by ID', err);
@@ -71,7 +71,7 @@ class User {
 
     static updatePassword(id, pw) {
         return new Promise((resolve, reject) => {
-            const sql = 'UPDATE users SET password = ? WHERE id = ?';
+            const sql = 'UPDATE user SET password = ? WHERE id = ?';
             db.query(sql, [pw, id], (err, results) => {
                 if (err) {
                     console.log('Error updating password', err);
@@ -85,7 +85,7 @@ class User {
 
     static updateOnlineState(id, onlineState) {
         return new Promise((resolve, reject) => {
-            const sql = 'UPDATE users SET isOnline = ? WHERE id = ?';
+            const sql = 'UPDATE user SET isOnline = ? WHERE id = ?';
             db.query(sql, [onlineState, id], (err, results) => {
                 if (err) {
                     console.log('Error updating online state', err);
@@ -98,7 +98,7 @@ class User {
 
     static deleteByUserName(username) {
         return new Promise((resolve, reject) => {
-            const sql = 'DELETE FROM users WHERE username = ?';
+            const sql = 'DELETE FROM user WHERE username = ?';
             db.query(sql, [username], (err, results) => {
                 if (err) {
                     console.log('Error updating online state', err);
@@ -111,7 +111,7 @@ class User {
 
     static deleteById(id) {
         return new Promise((resolve, reject) => {
-            const sql = 'DELETE FROM users WHERE id = ?';
+            const sql = 'DELETE FROM user WHERE id = ?';
             db.query(sql, [id], (err, results) => {
                 if (err) {
                     console.log('Error updating online state', err);
