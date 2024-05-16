@@ -1,5 +1,6 @@
 const db = require('../config/db.cjs');
 const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
 
 class User {
     static create(id, username, password, type, isOnline) {
@@ -43,7 +44,7 @@ class User {
 
     static findByUsername(username) {
         return new Promise((resolve, reject) => {
-            const sql = 'SELECT * FROM user WHERE username = ? LIMIT 1';
+            const sql = 'SELECT * FROM user WHERE username = ?';
             // 在 MySQL 中，查询结果通常会返回一个数组
             // 只返回一个用户 ;前提：用户名唯一
             db.query(sql, [username], (err, results) => {
@@ -77,6 +78,7 @@ class User {
                     console.log('Error updating password', err);
                     return reject(err);
                 }
+                console.log('Password updated')
                 resolve();//UPDATE 查询返回的是受影响的行数，而不是更新后的对象。
             });
         });
@@ -122,6 +124,16 @@ class User {
         });
     }
 
+    static comparePassword(newPw,curPw) {
+        return new Promise((resolve, reject) => {
+            bcrypt.compare(newPw, curPw, (err, isMatch) => {
+                if (err) { 
+                    console.error('wrong password', err);
+                    return reject(err); }
+                resolve(isMatch);
+            })
+        });
+    }
 };
 
 

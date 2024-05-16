@@ -1,10 +1,12 @@
 CREATE TABLE `smart-traffic`.`user` (
-  `id` INT NOT NULL,
-  `username` VARCHAR(24) NOT NULL,
-  `password` VARCHAR(8) NOT NULL,
-  `type` INT ZEROFILL NULL,
-  `isOnline` INT ZEROFILL NULL,
-  `insertId` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`, `insertId`),
+  `id` VARCHAR(255) NOT NULL,
+  `username` VARCHAR(25) NOT NULL,
+  `password` VARCHAR(20) NOT NULL,
+  `type` VARCHAR(15) NOT NULL,
+  `isOnline` BOOLEAN NOT NULL,
+  `insertID` INT UNSIGNED AUTO_INCREMENT,
+  PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
-  UNIQUE INDEX `insertId_UNIQUE` (`insertId` ASC) VISIBLE);
+  UNIQUE INDEX `username_UNIQUE` (`username` ASC) VISIBLE,
+  UNIQUE INDEX `insertID_UNIQUE` (`insertID` ASC) VISIBLE
+);

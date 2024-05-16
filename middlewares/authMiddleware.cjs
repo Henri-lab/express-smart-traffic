@@ -4,7 +4,7 @@ require('dotenv').config();
 
 // 验证token
 const verifyToken = (req, res, next) => {
-  const token = req.headers['smartTraffic-access-token'];
+  const token = req.headers.authorization;
   // 使用自定义头 smartTraffic-access-token 
   if (!token) return res.status(401).send({ auth: false, message: 'No token provided' });
 
