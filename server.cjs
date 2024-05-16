@@ -1,6 +1,9 @@
 const express = require('express');
 const userRoutes = require('./routes/userRoutes.cjs');
 const authRoutes = require('./routes/authRoutes.cjs');
+const trafficRoutes = require('./routes/trafficRoutes.cjs')
+const eventRoutes = require('./routes/eventRoutes.cjs')
+const noticeRoutes = require('./routes/noticeRoutes.cjs')
 
 const app = express();
 const port = 3036;
@@ -19,6 +22,9 @@ app.post('/', (req, res) => {
 // api入口设计
 app.use('/auth', authRoutes);
 app.use('/user', userRoutes)
+app.use('/traffic', trafficRoutes)
+app.use('/event', eventRoutes)
+app.use('/notice', noticeRoutes)
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
