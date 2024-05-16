@@ -98,7 +98,7 @@ class User {
         });
     }
 
-    static deleteByUserName(username) {
+    static deleteByUsername(username) {
         return new Promise((resolve, reject) => {
             const sql = 'DELETE FROM user WHERE username = ?';
             db.query(sql, [username], (err, results) => {

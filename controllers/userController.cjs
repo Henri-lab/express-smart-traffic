@@ -35,7 +35,7 @@ async function deleteUserByUsername(req, res) {
     const user = await User.findByUsername(username);
     if (!user) return res.status(404).json({ err: 'User not found' });
 
-    await user.deleteByUsername(username);
+    await User.deleteByUsername(username);
 
     res.status(200).json({ message: `delete ${username} successfully` });
   } catch (err) {
