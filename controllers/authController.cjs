@@ -46,13 +46,13 @@ const login = async (req, res) => {
   const { username, password } = req.body;
   try {
     const user = await User.findByUsername(username)
-    if (!user) return res.status(404).json({ status: 0, err: 'No user found' });
+    if (!user) return res.status(404).json({ status: 0, err: 'No user found', auth: false, token: null });
 
     const isMatch = await bcrypt.compare(password, user.password)
     // 是将第一个参数（未加密的密码）与第二个参数（已哈希化的密码）进行比较
-    if (!isMatch) return res.status(401).json({ auth: false, token: null });
+    if (!isMatch) return res.status(401).json({ status: 0, err: 'wrong password', auth: false, token: null });
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: 86400 });//decoded会记录id
-    res.status(200).json({ status: 1, auth: true, token: token });
+    res.status(200).json({ status: 1, msg: 'login successful', auth: true, token: token });
 
   } catch (err) {
     console.error('Unexpected error during login:', err);
@@ -61,7 +61,7 @@ const login = async (req, res) => {
 };
 
 const logout = (req, res) => {
-  res.status(200).json({ status: 1, auth: false, token: null });
+  res.status(200).json({ status: 1, msg: 'logout successful', auth: false, token: null });
 };
 
 
@@ -89,7 +89,6 @@ const changePassword = async (req, res) => {
     bcrypt.hash(newPassword, 8, async (err, hash) => {
       if (err) return res.status(500).json({ err: 'Server error' });
       const newHashedPassword = hash
-      console.log(newHashedPassword, 'newHashedPassword')
       await User.updatePassword(userId, newHashedPassword);
       res.status(200).json({ status: 1, msg: 'password updated' })
 
