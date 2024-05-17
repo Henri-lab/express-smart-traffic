@@ -4,12 +4,12 @@ module.exports = {
   entry: './server.cjs',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js'
+    filename: 'trafficModuleServer.js'
   },
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.cjs$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
