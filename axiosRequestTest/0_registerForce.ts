@@ -35,7 +35,7 @@ function config_registerForce(data: user_registerForce) {
 }
 
 //send request
-axios(config_registerForce(user_register_test))
+axios(config_registerForce(user_registerForce_test))
   .then(function (response) {
     console.log(JSON.stringify('response_registerForce_test:', response.data));
   })
