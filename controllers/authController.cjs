@@ -11,7 +11,10 @@ const register = async (req, res) => {
     const hashedPassword = hash
     try {
       const user = await User.findByUsername(username)
-      if (user) return res.status(409).json({ status: 0, err: 'username has existed!' });
+      if (user) {
+        res.status(200);
+        return res.json({ status: 0, err: 'username has existed!' });
+      }
       const result = await User.create(id, username, hashedPassword, type, isOnline);
       // 用户创建成功，返回状态码，提示，数据库用户ID，唯一用户名
       res.status(201).json({ status: 1, msg: 'User registered successfully', data: { insertID: result.key, mysqlUsername: result.mysql_username } });
@@ -61,7 +64,8 @@ const login = async (req, res) => {
 };
 
 const logout = (req, res) => {
-  res.status(200).json({ status: 1, msg: 'logout successful', auth: false, token: null });
+  res.status(200)
+  res.json({ status: 1, msg: 'logout successful', auth: false, token: null });
 };
 
 
@@ -113,7 +117,7 @@ const changeOlineState = async (req, res) => {
     res.status(200).json({ status: 1, msg: 'Online state changed successfully' });
   } catch (err) {
     console.error('Error changing online state:', err);
-    res.status(500).json({ status: 0, error: 'Server error' });
+    res.status(500).json({ status: 0, err: 'Server error' });
   }
 }
 

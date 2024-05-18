@@ -1,3 +1,4 @@
+import axios from 'axios';
 // // 测试数据
 var user_login_test = {
   id: '_id',
@@ -30,12 +31,12 @@ function config_login(data: user_login) {
       Host: 'localhost:3036',
       Connection: 'keep-alive',
     },
-    data: user_register_json,
+    data: user_login_json,
   };
 }
 
 //send request
-axios(config_login(user_register_test))
+axios(config_login(user_login_test))
   .then(function (response) {
     console.log(JSON.stringify('response_login_test:', response.data));
   })

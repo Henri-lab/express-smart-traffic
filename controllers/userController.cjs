@@ -22,7 +22,7 @@ async function getUserById(req, res) {
     if (!user) {
       return res.status(404).json({ status: 0, err: 'User not found' });
     }
-    res.json(user);
+    res.json({ status: 1, data: user });
   } catch (error) {
     console.error('Error fetching user by ID:', error);
     res.status(500).json({ status: 0, err: 'Server error' });

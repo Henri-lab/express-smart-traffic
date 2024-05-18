@@ -1,3 +1,4 @@
+import axios from 'axios';
 // // 测试数据
 var user_register_test = {
   id: '_id',

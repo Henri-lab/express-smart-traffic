@@ -14,7 +14,7 @@ app.use(express.json());
 
 // 使用 cors 中间件
 app.use(cors({
-  origin: 'http://localhost:5173', // 允许的前端来源
+  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175'], // 允许的前端来源
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // 允许的方法
   allowedHeaders: ['Content-Type', 'Authorization'], // 允许的请求头
   credentials: true // 允许携带凭证（如 Cookie）

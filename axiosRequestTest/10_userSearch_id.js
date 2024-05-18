@@ -20,10 +20,13 @@ axios(config)
 
 // #测试
 // {
-//     "insertID": 23,
-//     "id": "5",
-//     "username": "Betty",
-//     "password": "$2a$08$dPmrBqPf5BaXvObJrSEtBO/Dk1CzqhhNLSWQa/3.XmM.K9QQTlJwa",
-//     "type": "common-user",
-//     "isOnline": 1
+//   status: 1,
+//   data:{
+//        "insertID": 23,
+//        "id": "5",
+//        "username": "Betty",
+//        "password": "$2a$08$dPmrBqPf5BaXvObJrSEtBO/Dk1CzqhhNLSWQa/3.XmM.K9QQTlJwa",
+//        "type": "common-user",
+//        "isOnline": 1
+//         }
 // }

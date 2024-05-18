@@ -1,0 +1,3 @@
+uuid
+vuetify
+magic.css
