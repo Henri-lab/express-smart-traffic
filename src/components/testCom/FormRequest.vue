@@ -28,8 +28,7 @@
     </v-layout>
 
     <!-- 登录页面 -->
-    <!-- <img class="title-img" src="@/img/PornHubLogo.png" foolishIn />zx -->
-    <div class="login-page" v-if="isloginPage">
+    <div class="login-page animate__animated animate__lightSpeedInLeft" v-if="isloginPage">
       <v-card
         class="mx-auto pa-12 pb-8 card-login"
         max-width="500"
@@ -127,10 +126,7 @@
       </v-card>
 
       <!-- 登陆成功 -->
-      <div
-        class="login-done"
-        v-show="isLogindoneShow"
-      >
+      <div class="login-done" v-show="isLogindoneShow">
         <v-sheet
           class="pa-4 text-center mx-auto"
           elevation="12"
@@ -167,7 +163,10 @@
     </div>
 
     <!-- 注册页面 -->
-    <div class="regist-page" v-if="isRegisterPage">
+    <div
+      class="regist-page animate__animated animate__lightSpeedInLeft"
+      v-if="isRegisterPage"
+    >
       <!-- 注册检测-->
       <div class="alert" v-show="isAlert">
         <v-alert
@@ -334,12 +333,13 @@
     <div
       class="logout-page animate__animated"
       :class="{
-        animate__zoomInDown: isLogoutPage === true,
+        animate__zoomInDown: isLogoutPage,
       }"
       v-if="isLogoutPage"
     >
       <v-parallax
         src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg"
+        class="parallex"
       >
         <div
           class="d-flex flex-column fill-height justify-center align-center text-white"
@@ -395,6 +395,7 @@ const alertTitle = ref('');
 const alertText = ref('');
 const isLoading = ref(false);
 const loginInputBoderColor = ref(false);
+const isLogoutPageCliked = ref(false);
 
 // METHOD---------------------------------------------------------------
 // 登录
@@ -707,13 +708,6 @@ async function sleep(time) {
   height: 800px;
   margin: 0 auto;
   position: relative;
-  .title-img {
-    width: 40%;
-    position: absolute;
-    left: 50%;
-    top: 10%;
-    transform: translateX(-50%);
-  }
 
   .login-page {
     top: -2%;
@@ -742,6 +736,19 @@ async function sleep(time) {
       top: 62%;
       transform: translateX(-50%);
       text-align: center;
+    }
+  }
+  .logout-page {
+    width: 1000px;
+    height: 500px;
+    position: absolute;
+    .parallex {
+      width: 100%;
+      height: 100%;
+      top: -50%;
+      left: 50%;
+      transform: translateX(-50%);
+      position: absolute;
     }
   }
   .regist-page {
