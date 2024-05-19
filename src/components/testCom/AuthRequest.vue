@@ -1,5 +1,5 @@
 <template>
-  <div class="user">
+  <div class="auth-request">
     <!-- api交互 -->
     <axios-config ref="config"></axios-config>
 
@@ -28,7 +28,10 @@
     </v-layout>
 
     <!-- 登录页面 -->
-    <div class="login-page animate__animated animate__lightSpeedInLeft" v-if="isloginPage">
+    <div
+      class="login-page animate__animated animate__lightSpeedInLeft"
+      v-if="isloginPage"
+    >
       <v-card
         class="mx-auto pa-12 pb-8 card-login"
         max-width="500"
@@ -199,6 +202,7 @@
         <v-container>
           <v-text-field
             v-model="regist_username"
+            :rules="rulesUName"
             color="primary"
             label="用户名"
             variant="underlined"
@@ -206,6 +210,7 @@
 
           <v-text-field
             v-model="registPW"
+            :rules="rulesPW"
             color="primary"
             label="密码"
             variant="underlined"
@@ -213,6 +218,7 @@
 
           <v-text-field
             v-model="registPW_confirm"
+            :rules="rulesPW"
             color="primary"
             label="确认密码"
             variant="underlined"
@@ -349,6 +355,8 @@
         </div>
       </v-parallax>
     </div>
+
+    <!-- 外部组件 -->
   </div>
 </template>
 
@@ -396,6 +404,24 @@ const alertText = ref('');
 const isLoading = ref(false);
 const loginInputBoderColor = ref(false);
 const isLogoutPageCliked = ref(false);
+const rulesPW = [
+  (value) => !!value || 'Required.',
+  (value) => (value || '').length <= 20 || 'Max 20 characters',
+  (value) => {
+    const pattern =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return pattern.test(value) || 'Invalid password.';
+  },
+];
+const rulesUName = [
+  (value) => !!value || 'Required.',
+  (value) => (value || '').length <= 20 || 'Max 20 characters',
+  (value) => {
+    const pattern =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return pattern.test(value) || 'Invalid e-mail.';
+  },
+];
 
 // METHOD---------------------------------------------------------------
 // 登录
@@ -406,7 +432,6 @@ watch(
       loginInputBoderColor.value = false;
       pwNote.value = '';
     } else {
-      console.log('ss');
       loginInputBoderColor.value = true;
       pwNote.value = '密码格式不正确';
     }
@@ -421,7 +446,7 @@ const loginHandle = async () => {
     password: login_password.value,
   });
   if (config.value) {
-    const res = await config.value.start('post', data.value, route, token);
+    const res = await config.value.auth_start('post', data.value, route, token);
     if (res.status === 1) {
       response.push({ id: login_username.value, token: res.token });
       localStorageManager('set', 'Authorization-', response);
@@ -437,11 +462,6 @@ const loginHandle = async () => {
 };
 
 // 注册
-function alertHandle() {
-  isAlert.value = false;
-  alertText.value = '';
-  alertTitle.value = '';
-}
 function isValidPW(pw) {
   const passwordPattern =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -532,7 +552,7 @@ async function registerHandle() {
   const token = '';
   isLoading.value = true;
   await sleep(500); //模拟发送网络不佳的情况
-  const res = await config.value.start('post', data, route, token);
+  const res = await config.value.auth_start('post', data, route, token);
   await sleep(500); //模拟接受网络不佳的情况
   isLoading.value = false;
   if (res.status === 1) {
@@ -552,8 +572,14 @@ async function logout() {
   const result = [];
   localStorageManager('get', 'Authorization-', result);
   const token = result[0].token;
+  if (!token) return;
   const encodeToken = encodeURIComponent(token);
-  const res = await config.value.start('post', null, '/logout', encodeToken);
+  const res = await config.value.auth_start(
+    'post',
+    null,
+    '/logout',
+    encodeToken
+  );
   if (res.status === 1) {
     localStorageManager('clear', 'Authorization-');
   }
@@ -589,7 +615,7 @@ function otpHandle() {
   }
 }
 
-// 页面跳转
+// 其他按钮页面跳转
 function setTrue(arr) {
   arr.forEach((item) => {
     item.value = true;
@@ -608,6 +634,7 @@ function jumpToRegister() {
   setTrue([isRegisterPage, isRegisterForm]);
   setFalse([isloginPage, isRegisterdoneShow]);
 }
+// 导航栏按钮页面跳转
 async function handleItemClick(item_value) {
   switch (item_value) {
     case 'login':
@@ -628,13 +655,20 @@ async function handleItemClick(item_value) {
   }
 }
 
+// 样式设计
+function alertHandle() {
+  isAlert.value = false;
+  alertText.value = '';
+  alertTitle.value = '';
+}
+
 // util---------------------------------------------------------------------------
 // --本地存储
 const removeLocalStorageItemsByPrefix = (prefix) => {
   // 从后往前遍历以避免索引问题💥
   for (let i = localStorage.length - 1; i >= 0; i--) {
     const key = localStorage.key(i);
-    if (key.startsWith(prefix)) {
+    if (key.auth_startsWith(prefix)) {
       localStorage.removeItem(key);
     }
   }
@@ -660,7 +694,7 @@ const getLocalStorageItemsByPrefix = (prefix, resultArr = []) => {
   // 初始化resultArray作为参数，避免外部arr的副作用
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
-    if (key.startsWith(prefix)) {
+    if (key.auth_startsWith(prefix)) {
       const id = key.substring(prefix.length);
       try {
         const item = JSON.parse(localStorage.getItem(key));
