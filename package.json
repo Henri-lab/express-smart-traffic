@@ -1,0 +1,24 @@
+{
+  "name": "testvuejs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@mdi/font": "^7.4.47",
+    "axios": "^1.6.8",
+    "magic.css": "^1.4.8",
+    "sass": "^1.77.2",
+    "uuid": "^9.0.1",
+    "vue": "^3.4.21",
+    "vuetify": "^3.6.6"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "vite": "^5.2.8"
+  }
+}
