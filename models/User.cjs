@@ -41,7 +41,6 @@ class User {
         });
     }
 
-
     static findByUsername(username) {
         return new Promise((resolve, reject) => {
             const sql = 'SELECT * FROM user WHERE username = ?';
@@ -79,6 +78,20 @@ class User {
                     return reject(err);
                 }
                 console.log('Password updated')
+                resolve();//UPDATE 查询返回的是受影响的行数，而不是更新后的对象。
+            });
+        });
+    };
+
+    static updateTypeByUsername(username, type) {
+        return new Promise((resolve, reject) => {
+            const sql = 'UPDATE user SET type = ? WHERE username = ?';
+            db.query(sql, [type, username], (err, results) => {
+                if (err) {
+                    console.log('Error updating user type', err);
+                    return reject(err);
+                }
+                console.log('type updated')
                 resolve();//UPDATE 查询返回的是受影响的行数，而不是更新后的对象。
             });
         });
@@ -124,14 +137,54 @@ class User {
         });
     }
 
-    static comparePassword(newPw,curPw) {
+    static comparePassword(newPw, curPw) {
         return new Promise((resolve, reject) => {
             bcrypt.compare(newPw, curPw, (err, isMatch) => {
-                if (err) { 
+                if (err) {
                     console.error('wrong password', err);
-                    return reject(err); }
+                    return reject(err);
+                }
                 resolve(isMatch);
             })
+        });
+    }
+
+    static getAllUsers() {
+        return new Promise((resolve, reject) => {
+            const sql = 'SELECT * FROM user';
+            db.query(sql, (err, results) => {
+                if (err) {
+                    console.log('Error getting all users', err);
+                    return reject(err);
+                }
+                resolve(results);
+            });
+        });
+    }
+
+    static getUsersByType(type) {
+        return new Promise((resolve, reject) => {
+            const sql = 'SELECT * FROM user where type= ?';
+            db.query(sql, [type], (err, results) => {
+                if (err) {
+                    console.log(`Error getting users which type =${type}`, err);
+                    return reject(err);
+                }
+                resolve(results);
+            });
+        });
+    }
+
+    static getUsersByIsOnline(isOnline) {
+        return new Promise((resolve, reject) => {
+            const sql = 'SELECT * FROM user where isOnline= ?';
+            db.query(sql, [isOnline], (err, results) => {
+                if (err) {
+                    console.log(`Error getting users which type =${type}`, err);
+                    return reject(err);
+                }
+                resolve(results);
+            });
         });
     }
 };

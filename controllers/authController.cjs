@@ -104,7 +104,7 @@ const changePassword = async (req, res) => {
 }
 
 const changeOlineState = async (req, res) => {
-  const { onlineState } = req.body;
+  const { isOnline } = req.body;
   const userId = req.userId;
   try {
     // 查找用户
@@ -112,7 +112,7 @@ const changeOlineState = async (req, res) => {
     if (!user) return res.status(404).json({ status: 0, err: 'User not found' });
 
     // 更新用户的在线状态
-    await User.updateOnlineState(userId, onlineState);
+    await User.updateOnlineState(userId, isOnline);
 
     res.status(200).json({ status: 1, msg: 'Online state changed successfully' });
   } catch (err) {

@@ -4,7 +4,7 @@ require('dotenv').config();
 
 // 验证token
 const verifyToken = (req, res, next) => {
-  const auth = req.headers.authorization;
+  const auth = req.headers.authorization;//注意：本次练习没有使用标准`Bearer ${token}`格式
   if (!auth) return res.status(401).send({ auth: false, message: 'No token provided' });
 
   const token = decodeURIComponent(auth)
