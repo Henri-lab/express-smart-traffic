@@ -1,7 +1,7 @@
 <template>
   <div class="user">
     <!-- api交互 -->
-    <axios-config ref="request"></axios-config>
+    <axios-config ref="config"></axios-config>
 
     <!-- 侧边导航栏 -->
     <v-layout class="navi-drawer">
@@ -64,6 +64,7 @@
         <v-text-field
           v-model="login_password"
           class="password-input"
+          :class="{ borderRed: loginInputBoderColor === true }"
           :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
           :type="visible ? 'text' : 'password'"
           density="compact"
@@ -124,6 +125,45 @@
           <v-icon icon="mdi-chevron-right"></v-icon>
         </v-card-text>
       </v-card>
+
+      <!-- 登陆成功 -->
+      <div
+        class="login-done"
+        v-show="isLogindoneShow"
+      >
+        <v-sheet
+          class="pa-4 text-center mx-auto"
+          elevation="12"
+          max-width="600"
+          rounded="lg"
+          width="100%"
+        >
+          <v-icon
+            class="mb-5"
+            color="success"
+            icon="mdi-check-circle"
+            size="112"
+          ></v-icon>
+
+          <h2 class="text-h5 mb-6">成功登录账户</h2>
+
+          <v-divider class="mb-4"></v-divider>
+
+          <div class="text-end">
+            <v-btn
+              class="text-none"
+              color="success"
+              variant="flat"
+              width="90"
+              rounded
+              @click="isLogindoneShow = !isLogindoneShow"
+              v-ripple
+            >
+              Done
+            </v-btn>
+          </div>
+        </v-sheet>
+      </div>
     </div>
 
     <!-- 注册页面 -->
@@ -289,6 +329,26 @@
         </div>
       </v-overlay>
     </div>
+
+    <!-- 登出页面 -->
+    <div
+      class="logout-page animate__animated"
+      :class="{
+        animate__zoomInDown: isLogoutPage === true,
+      }"
+      v-if="isLogoutPage"
+    >
+      <v-parallax
+        src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg"
+      >
+        <div
+          class="d-flex flex-column fill-height justify-center align-center text-white"
+        >
+          <h1 class="text-h4 font-weight-thin mb-4">您已经成功登出</h1>
+          <h4 class="subheading">感谢您的使用，祝您生活愉快</h4>
+        </div>
+      </v-parallax>
+    </div>
   </div>
 </template>
 
@@ -296,9 +356,12 @@
 import { ref, onMounted } from 'vue';
 import AxiosConfig from './AxiosConfig.vue';
 import { v4 as uuidv4 } from 'uuid';
+import { watch } from 'vue';
+import 'animate.css';
 
+// DATA
 // 请求----------------------------------------------------------------
-const request = ref(null);
+const config = ref(null);
 const login_username = ref('');
 const login_password = ref('');
 const regist_username = ref('');
@@ -313,11 +376,13 @@ const loginIn_Show = ref(false);
 const sheetColor = ref('superface');
 const isloginPage = ref(false);
 const isRegisterdoneShow = ref(false);
+const isLogindoneShow = ref(false);
 const isRegisterForm = ref(false);
 const isRegisterPage = ref(false);
+const isLogoutPage = ref(false);
 const overlay = ref(false);
 const terms = ref(false);
-const pwNote = ref('密码规则');
+const pwNote = ref('');
 const menuItems = [
   { icon: 'mdi-account-circle', title: '个人信息', value: 'me' },
   { icon: 'mdi-draw', title: '注册', value: 'register' },
@@ -329,8 +394,23 @@ const isAlert = ref(false);
 const alertTitle = ref('');
 const alertText = ref('');
 const isLoading = ref(false);
+const loginInputBoderColor = ref(false);
 
+// METHOD---------------------------------------------------------------
 // 登录
+watch(
+  () => login_password.value,
+  (newValue) => {
+    if (isValidPW(newValue) || !newValue) {
+      loginInputBoderColor.value = false;
+      pwNote.value = '';
+    } else {
+      console.log('ss');
+      loginInputBoderColor.value = true;
+      pwNote.value = '密码格式不正确';
+    }
+  }
+);
 const loginHandle = async () => {
   const response = [];
   const route = '/login';
@@ -339,12 +419,17 @@ const loginHandle = async () => {
     username: login_username.value,
     password: login_password.value,
   });
-  if (request.value) {
-    const res = await request.value.start('post', data.value, route, token);
-    console.log(res, 'res');
+  if (config.value) {
+    const res = await config.value.start('post', data.value, route, token);
     if (res.status === 1) {
       response.push({ id: login_username.value, token: res.token });
       localStorageManager('set', 'Authorization-', response);
+      isLogindoneShow.value = true;
+    } else {
+      alertHandle();
+      isAlert.value = true;
+      alertTitle.value = '登录失败';
+      alertText.value = '请检查您的账户名称和密码';
     }
     // 路由跳转
   }
@@ -356,14 +441,14 @@ function alertHandle() {
   alertText.value = '';
   alertTitle.value = '';
 }
+function isValidPW(pw) {
+  const passwordPattern =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  return passwordPattern.test(pw);
+}
 async function registerHandle() {
-  function isValidPW(pw) {
-    const passwordPattern =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return passwordPattern.test(pw);
-  }
   // 请求组件加载完成
-  if (!request.value) {
+  if (!config.value) {
     return;
   }
   // 前置验证
@@ -446,7 +531,7 @@ async function registerHandle() {
   const token = '';
   isLoading.value = true;
   await sleep(500); //模拟发送网络不佳的情况
-  const res = await request.value.start('post', data, route, token);
+  const res = await config.value.start('post', data, route, token);
   await sleep(500); //模拟接受网络不佳的情况
   isLoading.value = false;
   if (res.status === 1) {
@@ -466,14 +551,14 @@ async function logout() {
   const result = [];
   localStorageManager('get', 'Authorization-', result);
   const token = result[0].token;
-  console.log(token, 'token');
-  // const encodeToken = encodeURIComponent(token);
-  // console.log(encodeToken, 'encodeToken');
-  // const res = request.value.start('post', null, '/logout', encodeToken);
-  // console.log(res, 'res');
+  const encodeToken = encodeURIComponent(token);
+  const res = await config.value.start('post', null, '/logout', encodeToken);
+  if (res.status === 1) {
+    localStorageManager('clear', 'Authorization-');
+  }
 }
 
-// vertify 验证 验证码
+//  验证 验证码
 function verifyHandle() {
   if (login_username.value) {
     if (vertifycode.value === 0) alert('请先申请验证码');
@@ -491,7 +576,8 @@ function verifyHandle() {
     if (otp.value.length !== 6) sheetColor.value = 'error';
   }
 }
-// resend：生成 验证码
+
+// 生成 验证码
 function otpHandle() {
   if (login_username.value) {
     sheetColor.value = 'superface';
@@ -521,27 +607,28 @@ function jumpToRegister() {
   setTrue([isRegisterPage, isRegisterForm]);
   setFalse([isloginPage, isRegisterdoneShow]);
 }
-function handleItemClick(item_value) {
+async function handleItemClick(item_value) {
   switch (item_value) {
     case 'login':
       setTrue([isloginPage]);
-      setFalse([isRegisterForm]);
+      setFalse([isRegisterPage, isLogoutPage]);
       break;
     case 'register':
-      setFalse([isloginPage, isRegisterdoneShow]);
       setTrue([isRegisterPage, isRegisterForm]);
+      setFalse([isloginPage, isRegisterdoneShow, isLogoutPage]);
       break;
     case 'logout':
+      setTrue([isLogoutPage]);
       setFalse([isloginPage, isRegisterPage]);
-      logout();
+      await logout();
 
     default:
-      setFalse([isloginPage, isRegisterPage]);
+      setFalse([isloginPage, isRegisterPage, isLogoutPage]);
   }
 }
 
 // util---------------------------------------------------------------------------
-
+// --本地存储
 const removeLocalStorageItemsByPrefix = (prefix) => {
   // 从后往前遍历以避免索引问题💥
   for (let i = localStorage.length - 1; i >= 0; i--) {
@@ -606,7 +693,7 @@ function localStorageManager(type, predix, arr) {
   }
 }
 
-// sleep
+// --sleep
 async function sleep(time) {
   return new Promise((resolve) => {
     setTimeout(() => resolve(), time);
@@ -632,6 +719,13 @@ async function sleep(time) {
     top: -2%;
     left: 30%;
     position: absolute;
+    .login-done {
+      width: 80%;
+      top: 20%;
+      left: 10%;
+      position: absolute;
+      opacity: 0.7;
+    }
     .title {
       text-align: center;
       font-size: 30px;
@@ -676,18 +770,8 @@ async function sleep(time) {
     }
   }
 }
-.test {
-  display: flex;
-  justify-content: space-around;
-  background-color: rgb(179, 87, 165);
-  top: 0;
-  left: 250px;
-  .start {
-    width: 100px;
-    background-color: antiquewhite;
-  }
-  .start:hover {
-    background-color: aqua;
-  }
+
+.borderRed {
+  color: red;
 }
 </style>
