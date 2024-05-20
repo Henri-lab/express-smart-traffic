@@ -28,7 +28,10 @@
     </v-layout>
 
     <!-- 登录页面 -->
-    <transition enter-active-class="animate__animated animate__flip">
+    <transition
+      enter-active-class="animate__animated animate__zoomIn"
+      leave-active-class="animate__animated animate__zoomOut"
+    >
       <div class="login-page animate__animated" v-if="isloginPage">
         <!-- 登录检测-->
         <div class="alert" v-show="isAlert">
@@ -42,7 +45,7 @@
             @click="alertHandle"
           ></v-alert>
         </div>
-        <!-- 登陆表单 -->
+        <!-- 登录表单 -->
         <v-card
           class="mx-auto pa-12 pb-8 card-login"
           max-width="500"
@@ -182,7 +185,10 @@
     </transition>
 
     <!-- 注册页面 -->
-    <transition enter-active-class="animate__animated animate__flip">
+    <transition
+      enter-active-class="animate__animated animate__zoomIn"
+      leave-active-class="animate__animated animate__zoomOut"
+    >
       <div class="regist-page animate__animated" v-if="isRegisterPage">
         <!-- 注册检测-->
         <div class="alert" v-show="isAlert">
@@ -207,8 +213,6 @@
         <!-- 注册表单 -->
         <v-card
           class="regist-form"
-          width="500"
-          height="450"
           title="用户注册"
           v-show="isRegisterForm"
           :hover="true"
@@ -371,12 +375,23 @@
     </transition>
 
     <!-- 其他组件 -->
-    <!-- 管理员 -->
+    <!-- 高级管理员 -->
     <transition
       enter-active-class="animate__animated animate__zoomIn"
       leave-active-class="animate__animated animate__zoomOut"
     >
-      <root-request v-if="isRootPage"></root-request>
+      <root-request v-if="isRootPage" class="root-page"></root-request>
+    </transition>
+
+    <!-- 事件发布 -->
+    <transition
+      enter-active-class="animate__animated animate__zoomIn"
+      leave-active-class="animate__animated animate__zoomOut"
+    >
+      <traffic-request
+        v-if="isTrafficPage"
+        class="traffic-page"
+      ></traffic-request>
     </transition>
   </div>
 </template>
@@ -388,6 +403,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { watch } from 'vue';
 import 'animate.css';
 import RootRequest from './RootRequest.vue';
+import trafficRequest from './TrafficRequest.vue';
 
 // DATA
 // 请求----------------------------------------------------------------
@@ -411,16 +427,18 @@ const isRegisterForm = ref(false);
 const isRegisterPage = ref(false);
 const isLogoutPage = ref(false);
 const isRootPage = ref(false);
+const isTrafficPage = ref(false);
 const overlay = ref(false);
 const terms = ref(false);
 const pwNote = ref('');
 const menuItems = [
-  { icon: 'mdi-account-circle', title: '个人信息', value: 'me' },
   { icon: 'mdi-draw', title: '注册', value: 'register' },
   { icon: 'mdi-login', title: '登入', value: 'login' },
-  { icon: 'mdi-logout', title: '登出', value: 'logout' },
   { icon: 'mdi-cog-outline', title: '设置', value: 'setting' },
   { icon: 'mdi-shield-account', title: '高级管理员', value: 'root' },
+  { icon: 'mdi-account-tie-hat', title: '交通管理员', value: 'traffic' },
+  { icon: 'mdi-account-circle', title: '个人信息', value: 'me' },
+  { icon: 'mdi-logout', title: '登出', value: 'logout' },
 ];
 const isAlert = ref(false);
 const alertTitle = ref('');
@@ -668,23 +686,39 @@ async function handleItemClick(item_value) {
       break;
     case 'register':
       setTrue([isRegisterPage, isRegisterForm]);
-      setFalse([isloginPage, isRegisterdoneShow, isLogoutPage, isRootPage]);
+      setFalse([
+        isloginPage,
+        isRegisterdoneShow,
+        isLogoutPage,
+        isRootPage,
+        isTrafficPage,
+      ]);
       isAlert.value = false;
       break;
     case 'logout':
       setTrue([isLogoutPage]);
-      setFalse([isloginPage, isRegisterPage, isRootPage]);
+      setFalse([isloginPage, isRegisterPage, isRootPage, isTrafficPage]);
       isAlert.value = false;
       await logout();
       break;
     case 'root':
       setTrue([isRootPage]);
-      setFalse([isloginPage, isRegisterPage, isLogoutPage]);
+      setFalse([isloginPage, isRegisterPage, isLogoutPage, isTrafficPage]);
       isAlert.value = false;
       break;
-
-    default:
+    case 'traffic':
+      setTrue([isTrafficPage]);
       setFalse([isloginPage, isRegisterPage, isLogoutPage, isRootPage]);
+      isAlert.value = false;
+      break;
+    default:
+      setFalse([
+        isloginPage,
+        isRegisterPage,
+        isLogoutPage,
+        isRootPage,
+        isTrafficPage,
+      ]);
       isAlert.value = false;
   }
 }
@@ -771,16 +805,23 @@ async function sleep(time) {
 </script>
 
 <style lang="scss" scoped>
-.user {
+.auth-request {
   width: 800px;
-  height: 800px;
   margin: 0 auto;
   position: relative;
-
   .login-page {
-    top: -2%;
+    width: 800px;
+    height: 1200px;
+    top: -60%;
     left: 30%;
     position: absolute;
+    .card-vertify {
+      width: 90%;
+      left: 50%;
+      top: 62%;
+      transform: translateX(-50%);
+      text-align: center;
+    }
     .login-done {
       width: 80%;
       top: 20%;
@@ -799,18 +840,13 @@ async function sleep(time) {
       margin-top: 20px;
       position: relative;
     }
-    .card-vertify {
-      width: 600px;
-      left: 50%;
-      top: 62%;
-      transform: translateX(-50%);
-      text-align: center;
-      position: absolute;
-    }
   }
   .logout-page {
-    width: 1000px;
+    width: 800px;
     height: 500px;
+    top: 0;
+    left: 30%;
+    top: 100px;
     position: absolute;
     .parallex {
       width: 100%;
@@ -822,8 +858,10 @@ async function sleep(time) {
     }
   }
   .regist-page {
-    top: 0;
-    left: 30%;
+    width: 450px;
+    height: 500px;
+    top: -40%;
+    left: 50%;
     position: absolute;
     .loading {
       z-index: 1;
@@ -846,9 +884,28 @@ async function sleep(time) {
       }
     }
   }
+  .root-page {
+    width: 800px;
+    top: -250px;
+    left: 30%;
+    position: absolute;
+  }
+  .traffic-page {
+    width: 800px;
+    top: -250px;
+    left: 30%;
+    position: absolute;
+  }
 }
 
 .borderRed {
   color: red;
+}
+.alert {
+  position: absolute;
+  top: -30%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
 }
 </style>

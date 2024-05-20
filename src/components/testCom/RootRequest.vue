@@ -488,8 +488,9 @@ function localStorageManager(type, predix, arr) {
 <style lang="scss" scoped>
 .root-request {
   width: 600px;
+  height: 600px;
   margin: 0 auto;
-  margin-top: 50px;
+  margin-top: 20px;
   .warning {
     width: 30%;
     position: fixed;
@@ -501,8 +502,18 @@ function localStorageManager(type, predix, arr) {
     z-index: 1;
   }
   .search {
+    width: 80%;
   }
   .filter {
+    position: absolute;
+    left: 12%;
+    top: 20%;
+  }
+  .userList {
+    width: 80%;
+    top: 30%;
+    left: 10%;
+    position: absolute;
   }
 }
 </style>

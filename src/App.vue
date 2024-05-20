@@ -1,9 +1,9 @@
 <script setup>
 import AuthRequest from './components/testCom/AuthRequest.vue';
-import RootRequest from './components/testCom/RootRequest.vue';
+import Home from './components/testCom/Home.vue';
 </script>
 
 <template>
+  <!-- <Home /> -->
   <auth-request></auth-request>
-  <!-- <root-request></root-request> -->
 </template>
