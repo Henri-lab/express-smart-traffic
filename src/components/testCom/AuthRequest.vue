@@ -28,335 +28,341 @@
     </v-layout>
 
     <!-- 登录页面 -->
-    <div
-      class="login-page animate__animated animate__lightSpeedInLeft"
-      v-if="isloginPage"
+    <transition
+      enter-active-class="animate__animated animate__flip"
     >
-      <v-card
-        class="mx-auto pa-12 pb-8 card-login"
-        max-width="500"
-        :hover="true"
-      >
-        <div class="title">用户登录</div>
-        <div
-          class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between"
-        >
-          用户名
-        </div>
-
-        <v-text-field
-          v-model="login_username"
-          class="username-input"
-          density="compact"
-          placeholder="username"
-          prepend-inner-icon="mdi-account-outline"
-          variant="outlined"
-        ></v-text-field>
-
-        <div
-          class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between"
-        >
-          Password
-
-          <span class="text-caption text-decoration-none text-blue">
-            {{ pwNote }}</span
-          >
-        </div>
-
-        <v-text-field
-          v-model="login_password"
-          class="password-input"
-          :class="{ borderRed: loginInputBoderColor === true }"
-          :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-          :type="visible ? 'text' : 'password'"
-          density="compact"
-          placeholder="Enter your password"
-          prepend-inner-icon="mdi-lock-outline"
-          variant="outlined"
-          @click:append-inner="visible = !visible"
-        ></v-text-field>
-
+      <div class="login-page animate__animated" v-if="isloginPage">
         <v-card
-          class="mb-12 card-vertify"
-          color="surface-variant"
-          variant="tonal"
+          class="mx-auto pa-12 pb-8 card-login"
+          max-width="500"
+          :hover="true"
         >
-          <h3 class="text-h6 mb-4">确认您是真人</h3>
-          <div class="text-body-2">
-            We sent a verification code<br />
-            Please input the code below.
+          <div class="title">用户登录</div>
+          <div
+            class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between"
+          >
+            用户名
           </div>
 
-          <v-sheet :color="sheetColor">
-            <v-otp-input v-model="otp" type="text" variant="solo"></v-otp-input>
-          </v-sheet>
+          <v-text-field
+            v-model="login_username"
+            class="username-input"
+            density="compact"
+            placeholder="username"
+            prepend-inner-icon="mdi-account-outline"
+            variant="outlined"
+          ></v-text-field>
+
+          <div
+            class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between"
+          >
+            Password
+
+            <span class="text-caption text-decoration-none text-blue">
+              {{ pwNote }}</span
+            >
+          </div>
+
+          <v-text-field
+            v-model="login_password"
+            class="password-input"
+            :class="{ borderRed: loginInputBoderColor === true }"
+            :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+            :type="visible ? 'text' : 'password'"
+            density="compact"
+            placeholder="Enter your password"
+            prepend-inner-icon="mdi-lock-outline"
+            variant="outlined"
+            @click:append-inner="visible = !visible"
+          ></v-text-field>
+
+          <v-card
+            class="mb-12 card-vertify"
+            color="surface-variant"
+            variant="tonal"
+          >
+            <h3 class="text-h6 mb-4">确认您是真人</h3>
+            <div class="text-body-2">
+              We sent a verification code<br />
+              Please input the code below.
+            </div>
+
+            <v-sheet :color="sheetColor">
+              <v-otp-input
+                v-model="otp"
+                type="text"
+                variant="solo"
+              ></v-otp-input>
+            </v-sheet>
+
+            <v-btn
+              class="my-4"
+              color="purple"
+              height="40"
+              text="Verify"
+              variant="flat"
+              width="70%"
+              @click="verifyHandle"
+              v-ripple
+            ></v-btn>
+
+            <div class="text-caption">
+              Didn't receive the code?
+              <a href="#" @click.prevent="otpHandle">Resend</a>
+            </div>
+          </v-card>
 
           <v-btn
-            class="my-4"
-            color="purple"
-            height="40"
-            text="Verify"
-            variant="flat"
-            width="70%"
-            @click="verifyHandle"
-            v-ripple
-          ></v-btn>
+            v-show="loginIn_Show"
+            class="mb-8"
+            color="blue"
+            size="large"
+            variant="tonal"
+            block
+            @click="loginHandle"
+          >
+            Log In
+          </v-btn>
 
-          <div class="text-caption">
-            Didn't receive the code?
-            <a href="#" @click.prevent="otpHandle">Resend</a>
-          </div>
+          <v-card-text class="text-center">
+            <span class="signup-now" style="color: blue" @click="jumpToRegister"
+              >Sign up now</span
+            >
+            <v-icon icon="mdi-chevron-right"></v-icon>
+          </v-card-text>
         </v-card>
 
-        <v-btn
-          v-show="loginIn_Show"
-          class="mb-8"
-          color="blue"
-          size="large"
-          variant="tonal"
-          block
-          @click="loginHandle"
-        >
-          Log In
-        </v-btn>
-
-        <v-card-text class="text-center">
-          <span class="signup-now" style="color: blue" @click="jumpToRegister"
-            >Sign up now</span
-          >
-          <v-icon icon="mdi-chevron-right"></v-icon>
-        </v-card-text>
-      </v-card>
-
-      <!-- 登陆成功 -->
-      <div class="login-done" v-show="isLogindoneShow">
-        <v-sheet
-          class="pa-4 text-center mx-auto"
-          elevation="12"
-          max-width="600"
-          rounded="lg"
-          width="100%"
-        >
-          <v-icon
-            class="mb-5"
-            color="success"
-            icon="mdi-check-circle"
-            size="112"
-          ></v-icon>
-
-          <h2 class="text-h5 mb-6">成功登录账户</h2>
-
-          <v-divider class="mb-4"></v-divider>
-
-          <div class="text-end">
-            <v-btn
-              class="text-none"
-              color="success"
-              variant="flat"
-              width="90"
-              rounded
-              @click="isLogindoneShow = !isLogindoneShow"
-              v-ripple
-            >
-              Done
-            </v-btn>
-          </div>
-        </v-sheet>
-      </div>
-    </div>
-
-    <!-- 注册页面 -->
-    <div
-      class="regist-page animate__animated animate__lightSpeedInLeft"
-      v-if="isRegisterPage"
-    >
-      <!-- 注册检测-->
-      <div class="alert" v-show="isAlert">
-        <v-alert
-          class="v-alert"
-          width="500"
-          icon="mdi-alert"
-          :title="alertTitle"
-          :text="alertText"
-          type="error"
-          @click="alertHandle"
-        ></v-alert>
-      </div>
-      <!-- 加载条 -->
-      <v-progress-circular
-        class="loading"
-        color="primary "
-        indeterminate
-        size="50"
-        v-show="isLoading"
-      ></v-progress-circular>
-      <!-- 注册表单 -->
-      <v-card
-        class="regist-form"
-        width="500"
-        height="450"
-        title="用户注册"
-        v-show="isRegisterForm"
-        :hover="true"
-      >
-        <v-container>
-          <v-text-field
-            v-model="regist_username"
-            :rules="rulesUName"
-            color="primary"
-            label="用户名"
-            variant="underlined"
-          ></v-text-field>
-
-          <v-text-field
-            v-model="registPW"
-            :rules="rulesPW"
-            color="primary"
-            label="密码"
-            variant="underlined"
-          ></v-text-field>
-
-          <v-text-field
-            v-model="registPW_confirm"
-            :rules="rulesPW"
-            color="primary"
-            label="确认密码"
-            variant="underlined"
-          ></v-text-field>
-
-          <span class="info" style="color: blue" @click="overlay = !overlay"
-            >产品简介</span
-          >
-          <v-checkbox
-            v-model="terms"
-            color="secondary"
-            label="已经阅读产品介绍"
-            @click="terms = !terms"
-          ></v-checkbox>
-        </v-container>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-
-          <v-btn color="success" @click="registerHandle"
-            >注册<v-icon icon="mdi-chevron-right" end></v-icon>
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-      <!-- 注册成功提示 -->
-      <div class="regist-done" v-show="isRegisterdoneShow">
-        <v-sheet
-          class="pa-4 text-center mx-auto"
-          elevation="12"
-          max-width="600"
-          rounded="lg"
-          width="100%"
-        >
-          <v-icon
-            class="mb-5"
-            color="success"
-            icon="mdi-check-circle"
-            size="112"
-          ></v-icon>
-
-          <h2 class="text-h5 mb-6">成功创建账户</h2>
-
-          <p class="mb-4 text-medium-emphasis text-body-2">
-            如果想详细了解产品功能
-            <a class="text-decoration-none text-info" href="#">查看</a>
-          </p>
-
-          <v-divider class="mb-4"></v-divider>
-
-          <div class="text-end">
-            <v-btn
-              class="text-none"
-              color="success"
-              variant="flat"
-              width="90"
-              rounded
-              @click="jumpToLogin"
-              v-ripple
-            >
-              Done
-            </v-btn>
-          </div>
-        </v-sheet>
-      </div>
-      <!-- 注册须知 -->
-      <v-overlay
-        v-model="overlay"
-        class="align-center justify-center"
-        contained
-      >
-        <v-overlay
-          v-model="overlay"
-          class="align-center justify-center d-flex"
-          absolute
-        >
-        </v-overlay>
-        <div class="regist-note">
+        <!-- 登陆成功 -->
+        <div class="login-done" v-show="isLogindoneShow">
           <v-sheet
-            border="md"
-            class="pa-6 text-white"
-            color="#141518"
-            max-height="500"
-            max-width="400"
+            class="pa-4 text-center mx-auto"
+            elevation="12"
+            max-width="600"
+            rounded="lg"
+            width="100%"
           >
-            <h4 class="text-h5 font-weight-bold mb-4">光谷智慧交通</h4>
-            <p class="mb-8">
-              随着我国经济社会的不断发展与城市化人口逐渐增多，居民经济条件越来越好，大众的出行使用车辆的数目也在急剧增加。伴随着交通道路上增加的车辆，早高峰、晚高峰的拥堵时间不断延长，道路的事故发生率也在不断增长，怎样让民众合理的出行对政府部门提出了更高的要求。基于以上的要求，我们开发一款WebGIS的智慧交通系统，使得大众能够合理规划出行，政府交通部门能够快速处理事故，缓解交通出行的拥堵。
-              <br />
-              <br />
-              请关注项目仓库地址
-              <a
-                class="text-red-accent-2"
-                href=" https://gitee.com/fahey/smart-city.git"
+            <v-icon
+              class="mb-5"
+              color="success"
+              icon="mdi-check-circle"
+              size="112"
+            ></v-icon>
+
+            <h2 class="text-h5 mb-6">成功登录账户</h2>
+
+            <v-divider class="mb-4"></v-divider>
+
+            <div class="text-end">
+              <v-btn
+                class="text-none"
+                color="success"
+                variant="flat"
+                width="90"
+                rounded
+                @click="isLogindoneShow = !isLogindoneShow"
+                v-ripple
               >
-                https://gitee.com/fahey/smart-city.git</a
-              >
-              获得及时的技术支持和产品更新
-            </p>
-            <v-btn
-              class="text-none text-black mb-4"
-              color="red-accent-2"
-              size="x-large"
-              variant="flat"
-              block
-              v-ripple
-              @click="overlay = false"
-            >
-              了解
-            </v-btn>
+                Done
+              </v-btn>
+            </div>
           </v-sheet>
         </div>
-      </v-overlay>
-    </div>
+      </div>
+    </transition>
+
+    <!-- 注册页面 -->
+    <transition
+      enter-active-class="animate__animated animate__flip"
+    >
+      <div class="regist-page animate__animated" v-if="isRegisterPage">
+        <!-- 注册检测-->
+        <div class="alert" v-show="isAlert">
+          <v-alert
+            class="v-alert"
+            width="500"
+            icon="mdi-alert"
+            :title="alertTitle"
+            :text="alertText"
+            type="error"
+            @click="alertHandle"
+          ></v-alert>
+        </div>
+        <!-- 加载条 -->
+        <v-progress-circular
+          class="loading"
+          color="primary "
+          indeterminate
+          size="50"
+          v-show="isLoading"
+        ></v-progress-circular>
+        <!-- 注册表单 -->
+        <v-card
+          class="regist-form"
+          width="500"
+          height="450"
+          title="用户注册"
+          v-show="isRegisterForm"
+          :hover="true"
+        >
+          <v-container>
+            <v-text-field
+              v-model="regist_username"
+              :rules="rulesUName"
+              color="primary"
+              label="用户名"
+              variant="underlined"
+            ></v-text-field>
+
+            <v-text-field
+              v-model="registPW"
+              :rules="rulesPW"
+              color="primary"
+              label="密码"
+              variant="underlined"
+            ></v-text-field>
+
+            <v-text-field
+              v-model="registPW_confirm"
+              :rules="rulesPW"
+              color="primary"
+              label="确认密码"
+              variant="underlined"
+            ></v-text-field>
+
+            <span class="info" style="color: blue" @click="overlay = !overlay"
+              >产品简介</span
+            >
+            <v-checkbox
+              v-model="terms"
+              color="secondary"
+              label="已经阅读产品介绍"
+              @click="terms = !terms"
+            ></v-checkbox>
+          </v-container>
+
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+
+            <v-btn color="success" @click="registerHandle"
+              >注册<v-icon icon="mdi-chevron-right" end></v-icon>
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+        <!-- 注册成功提示 -->
+        <div class="regist-done" v-show="isRegisterdoneShow">
+          <v-sheet
+            class="pa-4 text-center mx-auto"
+            elevation="12"
+            max-width="600"
+            rounded="lg"
+            width="100%"
+          >
+            <v-icon
+              class="mb-5"
+              color="success"
+              icon="mdi-check-circle"
+              size="112"
+            ></v-icon>
+
+            <h2 class="text-h5 mb-6">成功创建账户</h2>
+
+            <p class="mb-4 text-medium-emphasis text-body-2">
+              如果想详细了解产品功能
+              <a class="text-decoration-none text-info" href="#">查看</a>
+            </p>
+
+            <v-divider class="mb-4"></v-divider>
+
+            <div class="text-end">
+              <v-btn
+                class="text-none"
+                color="success"
+                variant="flat"
+                width="90"
+                rounded
+                @click="jumpToLogin"
+                v-ripple
+              >
+                Done
+              </v-btn>
+            </div>
+          </v-sheet>
+        </div>
+        <!-- 注册须知 -->
+        <v-overlay
+          v-model="overlay"
+          class="align-center justify-center"
+          contained
+        >
+          <v-overlay
+            v-model="overlay"
+            class="align-center justify-center d-flex"
+            absolute
+          >
+          </v-overlay>
+          <div class="regist-note">
+            <v-sheet
+              border="md"
+              class="pa-6 text-white"
+              color="#141518"
+              max-height="500"
+              max-width="400"
+            >
+              <h4 class="text-h5 font-weight-bold mb-4">光谷智慧交通</h4>
+              <p class="mb-8">
+                随着我国经济社会的不断发展与城市化人口逐渐增多，居民经济条件越来越好，大众的出行使用车辆的数目也在急剧增加。伴随着交通道路上增加的车辆，早高峰、晚高峰的拥堵时间不断延长，道路的事故发生率也在不断增长，怎样让民众合理的出行对政府部门提出了更高的要求。基于以上的要求，我们开发一款WebGIS的智慧交通系统，使得大众能够合理规划出行，政府交通部门能够快速处理事故，缓解交通出行的拥堵。
+                <br />
+                <br />
+                请关注项目仓库地址
+                <a
+                  class="text-red-accent-2"
+                  href=" https://gitee.com/fahey/smart-city.git"
+                >
+                  https://gitee.com/fahey/smart-city.git</a
+                >
+                获得及时的技术支持和产品更新
+              </p>
+              <v-btn
+                class="text-none text-black mb-4"
+                color="red-accent-2"
+                size="x-large"
+                variant="flat"
+                block
+                v-ripple
+                @click="overlay = false"
+              >
+                了解
+              </v-btn>
+            </v-sheet>
+          </div>
+        </v-overlay>
+      </div>
+    </transition>
 
     <!-- 登出页面 -->
-    <div
-      class="logout-page animate__animated"
-      :class="{
-        animate__zoomInDown: isLogoutPage,
-      }"
-      v-if="isLogoutPage"
+    <transition
+      enter-active-class="animate__animated animate__zoomInDown"
+      leave-active-class="animate__animated animate__zoomOutDown"
     >
-      <v-parallax
-        src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg"
-        class="parallex"
-      >
-        <div
-          class="d-flex flex-column fill-height justify-center align-center text-white"
+      <div class="logout-page" v-if="isLogoutPage">
+        <v-parallax
+          src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg"
+          class="parallex"
         >
-          <h1 class="text-h4 font-weight-thin mb-4">您已经成功登出</h1>
-          <h4 class="subheading">感谢您的使用，祝您生活愉快</h4>
-        </div>
-      </v-parallax>
-    </div>
+          <div
+            class="d-flex flex-column fill-height justify-center align-center text-white"
+          >
+            <h1 class="text-h4 font-weight-thin mb-4">您已经成功登出</h1>
+            <h4 class="subheading">感谢您的使用，祝您生活愉快</h4>
+          </div>
+        </v-parallax>
+      </div>
+    </transition>
 
-    <!-- 外部组件 -->
+    <!-- 其他组件 -->
+    <!-- 管理员 -->
   </div>
 </template>
 
@@ -417,9 +423,8 @@ const rulesUName = [
   (value) => !!value || 'Required.',
   (value) => (value || '').length <= 20 || 'Max 20 characters',
   (value) => {
-    const pattern =
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return pattern.test(value) || 'Invalid e-mail.';
+    const pattern = /^[^\u4E00-\u9FFF]*$/;
+    return pattern.test(value) || 'Invalid username.';
   },
 ];
 
@@ -571,6 +576,7 @@ async function registerHandle() {
 async function logout() {
   const result = [];
   localStorageManager('get', 'Authorization-', result);
+  if (result.length === 0) return;
   const token = result[0].token;
   if (!token) return;
   const encodeToken = encodeURIComponent(token);
