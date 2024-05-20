@@ -4,6 +4,6 @@ import RootRequest from './components/testCom/RootRequest.vue';
 </script>
 
 <template>
-  <!-- <auth-request></auth-request> -->
-  <root-request></root-request>
+  <auth-request></auth-request>
+  <!-- <root-request></root-request> -->
 </template>

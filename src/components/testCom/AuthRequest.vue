@@ -28,10 +28,21 @@
     </v-layout>
 
     <!-- 登录页面 -->
-    <transition
-      enter-active-class="animate__animated animate__flip"
-    >
+    <transition enter-active-class="animate__animated animate__flip">
       <div class="login-page animate__animated" v-if="isloginPage">
+        <!-- 登录检测-->
+        <div class="alert" v-show="isAlert">
+          <v-alert
+            class="v-alert"
+            width="500"
+            icon="mdi-alert"
+            :title="alertTitle"
+            :text="alertText"
+            type="error"
+            @click="alertHandle"
+          ></v-alert>
+        </div>
+        <!-- 登陆表单 -->
         <v-card
           class="mx-auto pa-12 pb-8 card-login"
           max-width="500"
@@ -75,7 +86,7 @@
             variant="outlined"
             @click:append-inner="visible = !visible"
           ></v-text-field>
-
+          <!-- 验证码 -->
           <v-card
             class="mb-12 card-vertify"
             color="surface-variant"
@@ -111,7 +122,7 @@
               <a href="#" @click.prevent="otpHandle">Resend</a>
             </div>
           </v-card>
-
+          <!-- 登录按键 -->
           <v-btn
             v-show="loginIn_Show"
             class="mb-8"
@@ -123,7 +134,7 @@
           >
             Log In
           </v-btn>
-
+          <!-- 立即注册 -->
           <v-card-text class="text-center">
             <span class="signup-now" style="color: blue" @click="jumpToRegister"
               >Sign up now</span
@@ -171,9 +182,7 @@
     </transition>
 
     <!-- 注册页面 -->
-    <transition
-      enter-active-class="animate__animated animate__flip"
-    >
+    <transition enter-active-class="animate__animated animate__flip">
       <div class="regist-page animate__animated" v-if="isRegisterPage">
         <!-- 注册检测-->
         <div class="alert" v-show="isAlert">
@@ -363,6 +372,12 @@
 
     <!-- 其他组件 -->
     <!-- 管理员 -->
+    <transition
+      enter-active-class="animate__animated animate__zoomInDown"
+      leave-active-class="animate__animated animate__zoomOutDown"
+    >
+      <root-request v-if="isRootPage"></root-request>
+    </transition>
   </div>
 </template>
 
@@ -372,6 +387,7 @@ import AxiosConfig from './AxiosConfig.vue';
 import { v4 as uuidv4 } from 'uuid';
 import { watch } from 'vue';
 import 'animate.css';
+import RootRequest from './RootRequest.vue';
 
 // DATA
 // 请求----------------------------------------------------------------
@@ -394,6 +410,7 @@ const isLogindoneShow = ref(false);
 const isRegisterForm = ref(false);
 const isRegisterPage = ref(false);
 const isLogoutPage = ref(false);
+const isRootPage = ref(false);
 const overlay = ref(false);
 const terms = ref(false);
 const pwNote = ref('');
@@ -403,6 +420,7 @@ const menuItems = [
   { icon: 'mdi-login', title: '登入', value: 'login' },
   { icon: 'mdi-logout', title: '登出', value: 'logout' },
   { icon: 'mdi-cog-outline', title: '设置', value: 'setting' },
+  { icon: 'mdi-shield-account', title: '高级管理员', value: 'root' },
 ];
 const isAlert = ref(false);
 const alertTitle = ref('');
@@ -645,19 +663,30 @@ async function handleItemClick(item_value) {
   switch (item_value) {
     case 'login':
       setTrue([isloginPage]);
-      setFalse([isRegisterPage, isLogoutPage]);
+      setFalse([isRegisterPage, isLogoutPage, isRootPage]);
+      isAlert.value = false;
       break;
     case 'register':
       setTrue([isRegisterPage, isRegisterForm]);
-      setFalse([isloginPage, isRegisterdoneShow, isLogoutPage]);
+      setFalse([isloginPage, isRegisterdoneShow, isLogoutPage, isRootPage]);
+      isAlert.value = false;
       break;
     case 'logout':
       setTrue([isLogoutPage]);
-      setFalse([isloginPage, isRegisterPage]);
+      setFalse([isloginPage, isRegisterPage, isRootPage]);
+      isAlert.value = false;
       await logout();
+      break;
+    case 'root':
+      console.log('toot');
+      setTrue([isRootPage]);
+      setFalse([isloginPage, isRegisterPage, isRootPage]);
+      isAlert.value = false;
+      break;
 
     default:
-      setFalse([isloginPage, isRegisterPage, isLogoutPage]);
+      setFalse([isloginPage, isRegisterPage, isLogoutPage, isRootPage]);
+      isAlert.value = false;
   }
 }
 
@@ -674,7 +703,7 @@ const removeLocalStorageItemsByPrefix = (prefix) => {
   // 从后往前遍历以避免索引问题💥
   for (let i = localStorage.length - 1; i >= 0; i--) {
     const key = localStorage.key(i);
-    if (key.auth_startsWith(prefix)) {
+    if (key.startsWith(prefix)) {
       localStorage.removeItem(key);
     }
   }
@@ -700,7 +729,7 @@ const getLocalStorageItemsByPrefix = (prefix, resultArr = []) => {
   // 初始化resultArray作为参数，避免外部arr的副作用
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
-    if (key.auth_startsWith(prefix)) {
+    if (key.startsWith(prefix)) {
       const id = key.substring(prefix.length);
       try {
         const item = JSON.parse(localStorage.getItem(key));
@@ -769,6 +798,7 @@ async function sleep(time) {
     }
     .card-login {
       margin-top: 20px;
+      position: relative;
     }
     .card-vertify {
       width: 600px;
@@ -776,6 +806,7 @@ async function sleep(time) {
       top: 62%;
       transform: translateX(-50%);
       text-align: center;
+      position: absolute;
     }
   }
   .logout-page {
