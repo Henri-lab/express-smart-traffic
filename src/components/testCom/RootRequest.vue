@@ -309,10 +309,11 @@ async function searchAllUsersHandler() {
 }
 async function getAllUsers() {
   // 管理员特权
-  // if (getCurrentUserType() !== 'root') {
-  //   warnHandler();
-  //   return 0;
-  // }
+  const type = await getCurrentUserType();
+  if (type !== 'root') {
+    warnHandler();
+    return 0;
+  }
   if (config_user.value) {
     const config = {
       method: 'GET',
@@ -363,10 +364,11 @@ function Emoji_isOnline(isOnline) {
 
 async function deleteUserHandler(username) {
   // 管理员特权
-  // if (getCurrentUserType() !== 'root') {
-  //   warnHandler();
-  //   return 0;
-  // }
+  const type = await getCurrentUserType();
+  if (type !== 'root') {
+    warnHandler();
+    return 0;
+  }
   if (config_user.value) {
     const config = {
       method: 'POST',
@@ -392,10 +394,11 @@ async function submitHandle() {
   }, 1000);
 }
 async function getUsersByName(username) {
-  // if (getCurrentUserType() !== 'root') {
-  //   warnHandler();
-  //   return 0;
-  // }
+  const type = await getCurrentUserType();
+  if (type !== 'root') {
+    warnHandler();
+    return 0;
+  }
   usersAllList.value = [];
   if (config_user.value) {
     const config = {
@@ -421,7 +424,7 @@ const removeLocalStorageItemsByPrefix = (prefix) => {
   // 从后往前遍历以避免索引问题💥
   for (let i = localStorage.length - 1; i >= 0; i--) {
     const key = localStorage.key(i);
-    if (key.auth_startsWith(prefix)) {
+    if (key.startsWith(prefix)) {
       localStorage.removeItem(key);
     }
   }
@@ -447,7 +450,7 @@ const getLocalStorageItemsByPrefix = (prefix, resultArr = []) => {
   // 初始化resultArray作为参数，避免外部arr的副作用
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
-    if (key.auth_startsWith(prefix)) {
+    if (key.startsWith(prefix)) {
       const id = key.substring(prefix.length);
       try {
         const item = JSON.parse(localStorage.getItem(key));

@@ -373,8 +373,8 @@
     <!-- 其他组件 -->
     <!-- 管理员 -->
     <transition
-      enter-active-class="animate__animated animate__zoomInDown"
-      leave-active-class="animate__animated animate__zoomOutDown"
+      enter-active-class="animate__animated animate__zoomIn"
+      leave-active-class="animate__animated animate__zoomOut"
     >
       <root-request v-if="isRootPage"></root-request>
     </transition>
@@ -678,9 +678,8 @@ async function handleItemClick(item_value) {
       await logout();
       break;
     case 'root':
-      console.log('toot');
       setTrue([isRootPage]);
-      setFalse([isloginPage, isRegisterPage, isRootPage]);
+      setFalse([isloginPage, isRegisterPage, isLogoutPage]);
       isAlert.value = false;
       break;
 
