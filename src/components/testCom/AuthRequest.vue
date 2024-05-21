@@ -3,6 +3,9 @@
     <!-- api交互 -->
     <axios-config ref="config"></axios-config>
 
+    <!-- 背景 -->
+    <Particles></Particles>
+
     <!-- 侧边导航栏 -->
     <v-layout class="navi-drawer">
       <v-navigation-drawer expand-on-hover rail>
@@ -404,6 +407,7 @@ import { watch } from 'vue';
 import 'animate.css';
 import RootRequest from './RootRequest.vue';
 import trafficRequest from './TrafficRequest.vue';
+import Particles from '@/components/testCom/animate/Particles.vue';
 
 // DATA
 // 请求----------------------------------------------------------------

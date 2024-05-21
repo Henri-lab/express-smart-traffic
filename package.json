@@ -10,15 +10,20 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
+    "@tsparticles/vue3": "^3.0.1",
     "@vuelidate/core": "^2.0.3",
     "@vuelidate/validators": "^2.0.4",
     "animate.css": "^4.1.1",
     "axios": "^1.6.8",
+    "granim": "^2.0.0",
     "magic.css": "^1.4.8",
     "sass": "^1.77.2",
+    "tsparticles": "^3.4.0",
     "typed.js": "^2.1.0",
     "uuid": "^9.0.1",
+    "v-draggable": "^0.0.3",
     "vue": "^3.4.21",
+    "vuedraggable": "^2.24.3",
     "vuetify": "^3.6.6"
   },
   "devDependencies": {
