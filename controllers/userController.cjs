@@ -57,7 +57,8 @@ async function getUserAll(req, res) {
 }
 
 async function deleteUserByUsername(req, res) {
-  const { username } = req.params;
+  const { username } = req.query;
+  console.log('delete user by username:', username)
   try {
     // 查找用户
     const user = await User.findByUsername(username);

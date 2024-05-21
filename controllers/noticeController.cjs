@@ -22,31 +22,31 @@ const getNoticeById = async (req, res) => {
 const createNotice = async (req, res) => {
     const newNotice = req.body;
     try {
-        const result = await Notice.create(newNotice);
-        res.status(201).json({ status: 1, id: result.insertId, ...newNotice });
+        await Notice.create(newNotice);
+        res.status(201).json({ status: 1, msg: 'notice created successfully' });
     } catch (err) {
         res.status(500).json({ status: 0, err: err.message });
     }
 };
 
 const updateNotice = async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.query;
     const updatedNotice = req.body;
     try {
-        const result = await Notice.update(id, updatedNotice);
-        res.json(result);
+        await Notice.update(id, updatedNotice);
+        res.status(200).json({ status: 1, msg: 'notice updated successfully' });
     } catch (err) {
-        res.status(500).json({ status: 1, err: err.message });
+        res.status(500).json({ status: 0, err: err.message });
     }
 };
 
 const deleteNotice = async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.query;
     try {
-        const result = await Notice.delete(id);
-        res.json(result);
+        await Notice.delete(id);
+        res.status(200).json({ status: 1, msg: 'notice deleted successfully' });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ status: 0, err: err.message });
     }
 };
 
