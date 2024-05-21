@@ -1,5 +1,6 @@
 <template>
   <div class="home" id="cover" ref="myCover">
+    <!-- 背景 -->
     <div id="map" ref="myMap"></div>
     <!-- 问候语 -->
     <div id="element"></div>
@@ -46,6 +47,7 @@
       </v-row>
     </v-container>
   </div>
+
 </template>
 
 <script setup>
@@ -137,15 +139,15 @@ onMounted(() => {
       '光谷智慧交通，为您提供最优服务',
       '无论您是司机、行人还是管理者',
       '我们的系统都为您准备了专属功能',
-      '司机朋友，请选择“司机”',
-      '行人朋友，请选择“行人”',
-      '管理人员，请选择“管理者”',
+      '项目管理人员，请选择“管理者”',
+      '交通工作者，请选择“交通管理员”',
+      '司机朋友，请选择“普通用户”',
       '如果您有任何疑问，请联系我们的客服',
       '愿您在光谷智慧交通平台上有愉快的体验',
       '让我们一起努力，创造安全、畅通的交通环境',
       '再次感谢您的加入，祝您一切顺利',
     ],
-    typeSpeed: 50,
+    typeSpeed: 100,
     loop: true,
   });
 });
@@ -211,13 +213,17 @@ onMounted(() => {
   z-index: 0;
 }
 
+// greet
 #element {
-  position: absolute;
+  width: 800px;
+  left: 55%;
   top: 5%;
-  left: 25%;
-  font-size: 100px;
   color: yellow;
   font-weight: bold;
+  position: absolute;
+  transform: translateX(-50%);
+  font-size: 30px;
+  // text-align: center !important;
 }
 
 .chooser {
@@ -231,22 +237,14 @@ onMounted(() => {
 }
 
 .v-card:not(.on-hover) {
-  opacity: 0.6;
+  opacity: 0.4;
 }
 
 .show-btns {
   color: rgba(255, 255, 255, 1) !important;
 }
 
-#element {
-  width: 800px;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 30px;
-  text-align: center !important;
-}
-
+// title
 .bloc-logo {
   position: relative;
   width: 500x;
@@ -255,13 +253,20 @@ onMounted(() => {
   transform: translateX(-50%);
   top: 30%;
   position: absolute;
-}
-
-.bloc-logo canvas,
-.bloc-logo .logo-mask {
-  width: 100%;
-  height: 100%;
-  font-size: 20px;
+  #logo-canvas {
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+  }
+  .logo-mask {
+    font-size: 4rem; /* Adjust the font size as needed */
+    font-weight: bold;
+    background: transparent;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    mix-blend-mode: screen;
+  }
 }
 
 .bloc-logo .logo-mask {
